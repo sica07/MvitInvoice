@@ -4,38 +4,42 @@ $this->headTitle($title);
 ?>
 <h1><?php echo $this->escapeHtml($title); ?></h1>
 
-<p><a href="<?php echo $this->url('mvitinvoice', array(
-        'action'=>'add'));?>">Create new invoice</a></p>
+<p><a href="<?php echo $this->url('mvitinvoice', array('action'=>'add'));?>">Create new invoice</a></p>
 
-<table class="table">
+<table class="table invoice">
 <tr>
-    <th>number</th>
-    <th>base_date</th>
-    <th>sent_date</th>
-    <th>payed_date</th>
-    <th>due_days</th>
-    <th>client</th>
-    <th>reference</th>
-    <th>text</th>
-    <th>&nbsp;</th>
+  <th class="icons">&nbsp;</th>
+  <th class="number">#</th>
+  <th class="client">Client</th>
+  <th class="date">Date</th>
 </tr>
 
 <?php foreach($invoices as $invoice) : ?>
 <tr>
-    <td><?php echo $this->escapeHtml($invoice->number);?></td>
-    <td><?php echo $this->escapeHtml($invoice->base_date);?></td>
-    <td><?php echo $this->escapeHtml($invoice->sent_date);?></td>
-    <td><?php echo $this->escapeHtml($invoice->payed_date);?></td>
-    <td><?php echo $this->escapeHtml($invoice->due_days);?></td>
-    <td><?php echo $this->escapeHtml($invoice->client_name);?></td>
-    <td><?php echo $this->escapeHtml($invoice->reference);?></td>
-    <td><?php echo $this->escapeHtml($invoice->text);?></td>
-    <td>
-        <a href="<?php echo $this->url('mvitinvoice',
-            array('action'=>'edit', 'id' => $invoice->id));?>">Edit</a>
-        <a href="<?php echo $this->url('mvitinvoice',
-            array('action'=>'delete', 'id' => $invoice->id));?>">Delete</a>
-    </td>
+  <td>
+<?php if ($invoice->sent_date == null) { ?>
+    <a href="<?php echo $this->url('mvitinvoice', array('action'=>'edit', 'id' => $invoice->id));?>"><img alt="Edit invoice" src="/images/icons/pencil.png"></a>
+    <a href="<?php echo $this->url('mvitinvoice', array('action'=>'previewpdf', 'id' => $invoice->id));?>"><img alt="Preview as PDF" src="/images/icons/page_white_acrobat.png"></a>
+    <a href="<?php echo $this->url('mvitinvoice', array('action'=>'sendbyemail', 'id' => $invoice->id));?>"><img alt="Send as email" src="/images/icons/email_go.png"></a>
+    <a href="<?php echo $this->url('mvitinvoice', array('action'=>'sendbyprint', 'id' => $invoice->id));?>"><img alt="Send as letter" src="/images/icons/print.png"></a>
+<?php } else { ?>
+<?php if ($invoice->payed_date == null) { ?>
+    <a href="<?php echo $this->url('mvitinvoice', array('action'=>'markaspayed', 'id' => $invoice->id));?>"><img alt="Mark as payed, sent <?php echo $this->escapeHtml($invoice->sent_date);?>" src="/images/icons/hourglass.png"></a>
+<?php } else { ?>
+    <img alt="Payed <?php echo $this->escapeHtml($invoice->payed_date);?>" src="/images/icons/page_tick.gif">
+<?php } ?>
+    <a href="<?php echo $this->url('mvitinvoice', array('action'=>'viewpdf', 'id' => $invoice->id));?>"><img alt="View as PDF" src="/images/icons/page_white_acrobat.png"></a>
+<?php } ?>
+  </td>
+  <td><?php echo $this->escapeHtml($invoice->number);?></td>
+  <td><?php echo $this->escapeHtml($invoice->client_name);?></td>
+<?php if ($invoice->payed_date != null) { ?>
+  <td>P: <?php echo $this->escapeHtml($invoice->payed_date);?></td>
+<?php } elseif ($invoice->sent_date != null) { ?>
+  <td>S: <?php echo $this->escapeHtml($invoice->sent_date);?></td>
+<?php } else { ?>
+  <td>C: <?php echo $this->escapeHtml($invoice->base_date);?></td>
+<?php } ?>
 </tr>
 <?php endforeach; ?>
 </table>
