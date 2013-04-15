@@ -4,9 +4,9 @@ $title = 'Edit invoice';
 $this->headTitle($title);
 ?>
 <h1><?php echo $this->escapeHtml($title); ?></h1>
-
 <?php
 $form = $this->form;
+
 $form->setAttribute('action', $this->url(
     'mvitinvoice',
     array(
@@ -15,18 +15,42 @@ $form->setAttribute('action', $this->url(
     )
 ));
 $form->prepare();
-
 echo $this->form()->openTag($form);
-echo $this->formHidden($form->get('id'));
-echo $this->formRow($form->get('number'));
-echo $this->formRow($form->get('base_date'));
-echo $this->formRow($form->get('vat'));
-echo $this->formRow($form->get('due_days'));
-echo $this->formRow($form->get('sent_date'));
-echo $this->formRow($form->get('payed_date'));
-echo $this->formRow($form->get('client_id'));
-echo $this->formRow($form->get('client_name'));
-echo $this->formRow($form->get('reference'));
-echo $this->formRow($form->get('text'));
-echo $this->formSubmit($form->get('submit'));
+
+$invoice = $form->get('invoice');
+
+echo $this->formHidden($invoice->get('id'))."\n";
+echo $this->formRow($invoice->get('number'))."\n";
+echo $this->formRow($invoice->get('baseDate'))."\n";
+echo $this->formRow($invoice->get('dueDays'))."\n";
+echo $this->formRow($invoice->get('sentDate'))."\n";
+echo $this->formRow($invoice->get('payedDate'))."\n";
+echo $this->formRow($invoice->get('clientId'))."\n";
+echo $this->formRow($invoice->get('reference'))."\n";
+echo $this->formRow($invoice->get('text'))."\n";
+echo $this->formCollection($invoice->get('rows'))."\n";
+?>
+<button onclick="return add_row()">Add a new row</button>
+<script>
+    function add_row() {
+        var currentCount = $('form > fieldset > fieldset').length;
+        var template = $('form > fieldset > span').data('template');
+        template = template.replace(/__index__/g, currentCount);
+
+        $('form > fieldset').append(template);
+
+        return false;
+    }
+
+    function del_row(obj) {
+        $(obj).parent().remove();
+
+        return false;
+    }
+
+</script>
+<?php
+echo $this->formHidden($form->get('csrf'))."\n";
+echo $this->formElement($form->get('submit'))."\n";
+
 echo $this->form()->closeTag();

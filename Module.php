@@ -1,8 +1,6 @@
 <?php
 namespace MvitInvoice;
 
-use MvitInvoice\Model\InvoiceTable;
-
 class Module {
     public function getAutoloaderConfig() {
         return array(
@@ -23,13 +21,6 @@ class Module {
 
     public function getServiceConfig() {
         return array(
-            'factories' => array(
-                'MvitInvoice\Model\InvoiceTable' =>  function($sm) {
-                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
-                    $table     = new InvoiceTable($dbAdapter);
-                    return $table;
-                },
-            ),
         );
     }
 }
